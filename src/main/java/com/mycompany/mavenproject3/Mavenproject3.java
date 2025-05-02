@@ -1,7 +1,15 @@
 package com.mycompany.mavenproject3;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import com.mycompany.ProductService;
 
 public class Mavenproject3 extends JFrame implements Runnable {
     private String text;
@@ -9,9 +17,20 @@ public class Mavenproject3 extends JFrame implements Runnable {
     private int width;
     private BannerPanel bannerPanel;
     private JButton addProductButton;
+    private ProductService service;
+    private int currentId = 0;
 
-    public Mavenproject3(String text) {
-        this.text = text;
+    public Mavenproject3(ProductService service) {
+        this.service = service;
+        // Menu yang tersedia: Americano | Pandan Latte | Aren Latte | Matcha Frappucino | Jus Apel
+        this.text = "Menu yang tersedia: ";
+        for (int i = 0; i < service.getAllProducts().size(); i++) {
+            var prod = service.getAllProducts().get(i);
+            this.text += prod.getName();
+
+            if (i != service.getAllProducts().size() - 1) this.text += " | ";
+        }
+
         setTitle("WK. STI Chill");
         setSize(600, 150);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,10 +48,28 @@ public class Mavenproject3 extends JFrame implements Runnable {
         add(bottomPanel, BorderLayout.SOUTH);
         
         addProductButton.addActionListener(e -> {
-            new ProductForm().setVisible(true);
+            new ProductForm(service).setVisible(true);
         });
 
         setVisible(true);
+
+        Thread thread1 = new Thread(() -> {
+            while (true) {
+                this.text = "Menu yang tersedia: ";
+                for (int i = 0; i < service.getAllProducts().size(); i++) {
+                    var prod = service.getAllProducts().get(i);
+                    this.text += prod.getName();
+
+                    if (i != service.getAllProducts().size() - 1) this.text += " | ";
+                }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                }
+            }
+        });
+        thread1.start();
 
         Thread thread = new Thread(this);
         thread.start();
@@ -66,6 +103,10 @@ public class Mavenproject3 extends JFrame implements Runnable {
     }
 
     public static void main(String[] args) {
-        new Mavenproject3("Menu yang tersedia: Americano | Pandan Latte | Aren Latte | Matcha Frappucino | Jus Apel");
+        ProductService service = new ProductService();
+        service.addProduct(new Product(1, "P001", "Americano", "Coffee", 18000, 10));
+        service.addProduct(new Product(2, "P002", "Pandan Latte", "Coffee", 15000, 8));
+
+        var app = new Mavenproject3(service);
     }
 }
