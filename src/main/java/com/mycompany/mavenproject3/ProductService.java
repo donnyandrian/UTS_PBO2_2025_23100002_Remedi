@@ -1,9 +1,7 @@
-package com.mycompany;
+package com.mycompany.mavenproject3;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mycompany.mavenproject3.Product;
 
 public class ProductService {
     private List<Product> products = new ArrayList<>();

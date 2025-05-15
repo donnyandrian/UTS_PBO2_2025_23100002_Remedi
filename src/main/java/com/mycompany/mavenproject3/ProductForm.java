@@ -20,10 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import javax.swing.table.DefaultTableModel;
-
-import com.mycompany.ProductService;
 
 public class ProductForm extends JFrame {
     private JTable drinkTable;
@@ -41,7 +38,6 @@ public class ProductForm extends JFrame {
         this.service = service;
         setTitle("WK. Cuan | Stok Barang");
         setSize(1000, 450);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         
@@ -150,7 +146,8 @@ public class ProductForm extends JFrame {
             double price = Double.parseDouble(priceText);
             int stock = Integer.parseInt(stockText);
 
-            service.updateProduct(index, new Product(service.getNextId(), code, name, category, price, stock));
+            int id = service.getAllProducts().get(index).getId();
+            service.updateProduct(index, new Product(id, code, name, category, price, stock));
 
             loadProductData();
         } catch(NumberFormatException ex) {

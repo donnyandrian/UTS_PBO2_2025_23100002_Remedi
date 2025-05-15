@@ -9,26 +9,27 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.mycompany.ProductService;
-
 public class Mavenproject3 extends JFrame implements Runnable {
     private String text;
     private int x;
     private int width;
     private BannerPanel bannerPanel;
     private JButton addProductButton;
+    private JButton salesFormButton;
     private ProductService service;
     private int currentId = 0;
 
     public Mavenproject3(ProductService service) {
         this.service = service;
-        // Menu yang tersedia: Americano | Pandan Latte | Aren Latte | Matcha Frappucino | Jus Apel
+        // Menu yang tersedia: Americano | Pandan Latte | Aren Latte | Matcha Frappucino
+        // | Jus Apel
         this.text = "Menu yang tersedia: ";
         for (int i = 0; i < service.getAllProducts().size(); i++) {
             var prod = service.getAllProducts().get(i);
             this.text += prod.getName();
 
-            if (i != service.getAllProducts().size() - 1) this.text += " | ";
+            if (i != service.getAllProducts().size() - 1)
+                this.text += " | ";
         }
 
         setTitle("WK. STI Chill");
@@ -45,10 +46,18 @@ public class Mavenproject3 extends JFrame implements Runnable {
         JPanel bottomPanel = new JPanel();
         addProductButton = new JButton("Kelola Produk");
         bottomPanel.add(addProductButton);
+
+        salesFormButton = new JButton("Jual Produk");
+        bottomPanel.add(salesFormButton);
+
         add(bottomPanel, BorderLayout.SOUTH);
-        
+
         addProductButton.addActionListener(e -> {
             new ProductForm(service).setVisible(true);
+        });
+
+        salesFormButton.addActionListener(e -> {
+            new SalesForm(service).setVisible(true);
         });
 
         setVisible(true);
@@ -58,9 +67,13 @@ public class Mavenproject3 extends JFrame implements Runnable {
                 this.text = "Menu yang tersedia: ";
                 for (int i = 0; i < service.getAllProducts().size(); i++) {
                     var prod = service.getAllProducts().get(i);
+                    if (prod.getStock() <= 0)
+                        continue;
+
                     this.text += prod.getName();
 
-                    if (i != service.getAllProducts().size() - 1) this.text += " | ";
+                    if (i != service.getAllProducts().size() - 1)
+                        this.text += " | ";
                 }
 
                 try {
