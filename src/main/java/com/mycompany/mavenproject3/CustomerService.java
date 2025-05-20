@@ -3,12 +3,12 @@ package com.mycompany.mavenproject3;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductService {
-    private final List<Product> products = new ArrayList<>();
+public class CustomerService {
+    private final List<Customer> customers = new ArrayList<>();
     private final List<DataChangeListener> listeners = new ArrayList<>();
     private int currentId = 0;
 
-    public ProductService() {
+    public CustomerService() {
     }
 
     public int getCurrentId() {
@@ -18,23 +18,28 @@ public class ProductService {
         return currentId + 1;
     }
 
-    public List<Product> getAllProducts() {
-        return products;
+    public List<Customer> getAllCustomers() {
+        return customers;
     }
 
-    public void addProduct(Product item) {
+    public void addCustomer(Customer item) {
         currentId = item.getId();
-        products.add(item);
+        customers.add(item);
         fireDataChangeListener("ADD");
     }
 
-    public void updateProduct(int id, Product item) {
-        products.set(id, item);
+    public void updateCustomer(int id, Customer item) {
+        customers.set(id, item);
         fireDataChangeListener("UPDATE");
     }
 
-    public void deleteProduct(int id) {
-        products.remove(id);
+    public void updateCustomerSpent(int id, double totalSpent) {
+        customers.get(id).addTotalSpent(totalSpent);
+        fireDataChangeListener("UPDATE");
+    }
+
+    public void deleteCustomer(int id) {
+        customers.remove(id);
         fireDataChangeListener("DELETE");
     }
 

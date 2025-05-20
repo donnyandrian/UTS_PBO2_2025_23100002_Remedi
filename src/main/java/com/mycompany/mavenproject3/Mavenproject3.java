@@ -13,11 +13,12 @@ public class Mavenproject3 extends JFrame implements Runnable {
     private String text;
     private int x;
     private int width;
-    private BannerPanel bannerPanel;
-    private JButton addProductButton;
-    private JButton salesFormButton;
-    private ProductService service;
-    private int currentId = 0;
+    private final BannerPanel bannerPanel;
+    private final JButton addProductButton;
+    private final JButton customerButton;
+    private final JButton salesFormButton;
+    @SuppressWarnings("unused")
+    private final ProductService service;
 
     public Mavenproject3(ProductService service) {
         this.service = service;
@@ -47,6 +48,9 @@ public class Mavenproject3 extends JFrame implements Runnable {
         addProductButton = new JButton("Kelola Produk");
         bottomPanel.add(addProductButton);
 
+        customerButton = new JButton("Kelola Pelanggan");
+        bottomPanel.add(customerButton);
+
         salesFormButton = new JButton("Jual Produk");
         bottomPanel.add(salesFormButton);
 
@@ -56,33 +60,32 @@ public class Mavenproject3 extends JFrame implements Runnable {
             new ProductForm(service).setVisible(true);
         });
 
+        CustomerService customerService = new CustomerService();
+        customerService.addCustomer(new Customer(1, "C001", "Anonymous", "-", "-", "Aktif", 0));
+        customerButton.addActionListener(e -> {
+            new CustomerForm(customerService).setVisible(true);
+        });
+
         salesFormButton.addActionListener(e -> {
-            new SalesForm(service).setVisible(true);
+            @SuppressWarnings("unused")
+            var form = new SalesForm(service, customerService);
         });
 
         setVisible(true);
 
-        Thread thread1 = new Thread(() -> {
-            while (true) {
-                this.text = "Menu yang tersedia: ";
-                for (int i = 0; i < service.getAllProducts().size(); i++) {
-                    var prod = service.getAllProducts().get(i);
-                    if (prod.getStock() <= 0)
-                        continue;
+        service.addDataChangeListener(e -> {
+            this.text = "Menu yang tersedia: ";
+            for (int i = 0; i < service.getAllProducts().size(); i++) {
+                var prod = service.getAllProducts().get(i);
+                if (prod.getStock() <= 0)
+                    continue;
 
-                    this.text += prod.getName();
+                this.text += prod.getName();
 
-                    if (i != service.getAllProducts().size() - 1)
-                        this.text += " | ";
-                }
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                }
+                if (i != service.getAllProducts().size() - 1)
+                    this.text += " | ";
             }
         });
-        thread1.start();
 
         Thread thread = new Thread(this);
         thread.start();
@@ -120,6 +123,7 @@ public class Mavenproject3 extends JFrame implements Runnable {
         service.addProduct(new Product(1, "P001", "Americano", "Coffee", 18000, 10));
         service.addProduct(new Product(2, "P002", "Pandan Latte", "Coffee", 15000, 8));
 
+        @SuppressWarnings("unused")
         var app = new Mavenproject3(service);
     }
 }

@@ -23,16 +23,16 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 public class ProductForm extends JFrame {
-    private JTable drinkTable;
-    private DefaultTableModel tableModel;
-    private JTextField codeField;
-    private JTextField nameField;
-    private JComboBox<String> categoryField;
-    private JTextField priceField;
-    private JTextField stockField;
-    private JButton saveButton;
+    private final JTable drinkTable;
+    private final DefaultTableModel tableModel;
+    private final JTextField codeField;
+    private final JTextField nameField;
+    private final JComboBox<String> categoryField;
+    private final JTextField priceField;
+    private final JTextField stockField;
+    private final JButton saveButton;
 
-    private ProductService service;
+    private final ProductService service;
 
     public ProductForm(ProductService service) {
         this.service = service;
@@ -85,6 +85,8 @@ public class ProductForm extends JFrame {
         add(new JScrollPane(drinkTable), BorderLayout.CENTER);
         add(formPanel, BorderLayout.SOUTH);
 
+        this.service.addDataChangeListener(e -> loadProductData());
+
         loadProductData();
     }
 
@@ -116,8 +118,6 @@ public class ProductForm extends JFrame {
             int nextId = service.getNextId();
 
             service.addProduct(new Product(nextId, code, name, category, price, stock));
-
-            loadProductData();
         } catch(NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Terdapat kesalahan:\n" + ex);
         }
@@ -148,8 +148,6 @@ public class ProductForm extends JFrame {
 
             int id = service.getAllProducts().get(index).getId();
             service.updateProduct(index, new Product(id, code, name, category, price, stock));
-
-            loadProductData();
         } catch(NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Terdapat kesalahan:\n" + ex);
         }
@@ -164,8 +162,6 @@ public class ProductForm extends JFrame {
             }
 
             service.deleteProduct(index);
-
-            loadProductData();
         } catch(NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Terdapat kesalahan:\n" + ex);
         }
